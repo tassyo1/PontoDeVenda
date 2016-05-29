@@ -26,7 +26,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
      * Creates new form JFramePontoDeVenda
      */
     
-    Integer cod_local;
+    
     public JFramePontoDeVenda() {
         initComponents();
         
@@ -281,15 +281,34 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBoxLocalidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLocalidadeActionPerformed
-       Integer cod_local = Integer.parseInt(jComboBoxLocalidade.getSelectedItem().toString().split("--")[1]);
-       this.cod_local = cod_local;
+       try{
+        Integer cod_local = Integer.parseInt(jComboBoxLocalidade.getSelectedItem().toString().split("--")[1]);
        PreencherComboProduto(cod_local);
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(rootPane, e +"1");
+       }
     }//GEN-LAST:event_jComboBoxLocalidadeActionPerformed
 
     private void jComboBoxProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxProdutoActionPerformed
-    
+      try{
+          if (jComboBoxProduto.getItemCount() > 0)
+          PreencherTextDescricao(Integer.parseInt(jComboBoxProduto.getSelectedItem().toString()));
+      }catch(Exception e){
+           JOptionPane.showMessageDialog(rootPane, e+"2__"+jComboBoxProduto.getItemCount());
+       }
+      
     }//GEN-LAST:event_jComboBoxProdutoActionPerformed
 
+    private void PreencherTextDescricao(Integer codProd){
+        try{
+           ProdutoDAO produtoDAO = new ProdutoDAO();
+           Produto produto = produtoDAO.buscaProdutoPorCodProduto(codProd);
+           jTextDescricaoProduto.setText(produto.getDescricao());
+            
+        }catch(SQLException | ClassNotFoundException e){
+            JOptionPane.showMessageDialog(rootPane, e+"3");
+        }
+    }
     private void PreencherComboLocalidade(){
         try{
             LocalidadeDAO localidadeDAO = new LocalidadeDAO();
@@ -305,13 +324,20 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     
     private void PreencherComboProduto(Integer idLocalidade) {
       try{
-        jComboBoxProduto.removeAllItems();
-        
+        String descricaoProduto="";
         ProdutoDAO produtoDAO = new ProdutoDAO();
+        
+        jComboBoxProduto.removeAllItems();
         List<Produto> listaProdutos = produtoDAO.listaProdutosPorLocalidade(idLocalidade);
           for (int i = 0; i < listaProdutos.size(); i++) {
             jComboBoxProduto.addItem(listaProdutos.get(i).getCodProd().toString());
+            if (i ==0 )
+                descricaoProduto =listaProdutos.get(i).getDescricao();
           }
+          
+        jComboBoxProduto.setSelectedIndex(0);
+        jTextDescricaoProduto.setText(descricaoProduto);
+        
       } catch(SQLException |ClassNotFoundException e){
           JOptionPane.showMessageDialog(rootPane, e);
       }
