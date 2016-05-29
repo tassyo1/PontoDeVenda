@@ -78,6 +78,8 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("PDV - Ponto de Venda");
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(215, 249, 248));
 
@@ -278,6 +280,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBoxLocalidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLocalidadeActionPerformed
