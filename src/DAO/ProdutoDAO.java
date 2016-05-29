@@ -26,10 +26,10 @@ public class ProdutoDAO {
   }
 
   
-  public List<Produto> lista() throws SQLException{
+  public List<Produto> listaProdutosPorLocalidade(Integer codLocalidade) throws SQLException{
     List<Produto> listaProduto = new ArrayList<Produto>();
     try{
-      ResultSet rs = statement.executeQuery("select * from produtos order by descricao");
+      ResultSet rs = statement.executeQuery("select * from produtos where codlocal = "+codLocalidade+"  order by descricao");
       while (rs.next()) {
         Produto produto = new Produto();
         produto.setCodProd(rs.getInt("codprod"));

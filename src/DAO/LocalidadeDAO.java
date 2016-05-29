@@ -20,7 +20,7 @@ public class LocalidadeDAO {
     conexao = new Conexao();
     try{
       statement = (Statement) conexao.getConn().createStatement();
-    } catch (SQLException ex) {
+    } catch (SQLException  ex) {
       throw ex;
     }
   }
@@ -37,7 +37,7 @@ public List<Localidade> lista() throws SQLException{
         localidade.setTelefone(rs.getString("telefone"));
         listaLocalidade.add(localidade);
       }
-    } catch (Exception e) {
+    } catch (SQLException e) {
       e.printStackTrace();
     } finally {
       conexao.fecharConexao();
