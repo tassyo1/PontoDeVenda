@@ -3,7 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/tassyosantana/Documentos/Projetos/Java/materia_dev_apps_bd/PontoDeVenda/src/Model/Produto.java</file>
+            <file>file:/home/tassyosantana/Documentos/Projetos/Java/materia_dev_apps_bd/PontoDeVenda/src/DAO/ClienteDAO.java</file>
+            <file>file:/home/tassyosantana/Documentos/Projetos/Java/materia_dev_apps_bd/PontoDeVenda/src/DAO/Conexao.java</file>
+            <file>file:/home/tassyosantana/Documentos/Projetos/Java/materia_dev_apps_bd/PontoDeVenda/src/View/JFramePontoDeVenda.java</file>
             <file>file:/home/tassyosantana/Documentos/Projetos/Java/materia_dev_apps_bd/PontoDeVenda/src/DAO/ProdutoDAO.java</file>
         </group>
     </open-files>

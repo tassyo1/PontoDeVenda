@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  *
  * @author tassyosantana
@@ -25,6 +26,26 @@ public class ProdutoDAO {
     }
   }
 
+  public List<Produto> lista() throws SQLException{
+    List<Produto> listaProduto = new ArrayList<Produto>();
+    try{
+      ResultSet rs = statement.executeQuery("select * from produtos order by descricao");
+      while (rs.next()) {
+        Produto produto = new Produto();
+        produto.setCodProd(rs.getInt("codprod"));
+        produto.setCodLocal(rs.getInt("codlocal"));
+        produto.setDescricao(rs.getString("descricao"));
+        produto.setQtdEstoque(rs.getInt("qtd_estoque"));
+        produto.setPrecoUnitario(rs.getFloat("preco_unitario"));
+        listaProduto.add(produto);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      conexao.fecharConexao();
+    }
+    return listaProduto;
+  }
   
   public List<Produto> listaProdutosPorLocalidade(Integer codLocalidade) throws SQLException{
     List<Produto> listaProduto = new ArrayList<Produto>();
@@ -64,5 +85,19 @@ public class ProdutoDAO {
       conexao.fecharConexao();
     }
     return produto;
+  }
+
+  public int AtualizaEstoque(Integer codProd, Integer quantidadeVendida) throws SQLException{
+    try {
+        String query = "update produtos set qtd_estoque = qtd_estoque - "+ quantidadeVendida +
+                                   " where codprod = "+codProd.toString()+"";
+        
+       return statement.executeUpdate(query); 
+    } catch(SQLException e) {
+      throw e;
+      
+    }finally{
+      conexao.fecharConexao();
+    }
   }
 }

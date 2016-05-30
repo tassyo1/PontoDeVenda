@@ -33,7 +33,9 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         initComponents();
         
         PreencherComboLocalidade();
+        PreencherComboProduto();
         PreencherComboCliente();
+
     }
 
     /**
@@ -56,10 +58,10 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jComboBoxProduto = new javax.swing.JComboBox<>();
-        jTextField1 = new javax.swing.JTextField();
+        jTextQuantidade = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jTextDescricaoProduto = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jButtonVender = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
@@ -130,8 +132,13 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jLabel6.setText("Descrição do Produto:");
         jLabel6.setToolTipText("");
 
-        jButton1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButton1.setText("Vender");
+        jButtonVender.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonVender.setText("Vender");
+        jButtonVender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVenderActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButton2.setText("Excluir");
@@ -196,9 +203,9 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
                                             .addComponent(jComboBoxLocalidade, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(97, 97, 97))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jTextQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                        .addComponent(jButtonVender, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -238,8 +245,8 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jComboBoxProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1))
+                            .addComponent(jTextQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonVender))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel6))
                     .addComponent(jButton2))
@@ -282,8 +289,8 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
 
     private void jComboBoxLocalidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLocalidadeActionPerformed
        try{
-        Integer cod_local = Integer.parseInt(jComboBoxLocalidade.getSelectedItem().toString().split("--")[1]);
-       PreencherComboProduto(cod_local);
+       // Integer cod_local = Integer.parseInt(jComboBoxLocalidade.getSelectedItem().toString().split("--")[1]);
+      // PreencherComboProduto(cod_local);
        }catch(Exception e){
            JOptionPane.showMessageDialog(rootPane, e +"1");
        }
@@ -298,6 +305,23 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
        }
       
     }//GEN-LAST:event_jComboBoxProdutoActionPerformed
+
+    private void jButtonVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVenderActionPerformed
+       try{
+        String msg = TratarExistenciaProduto();
+        if (TratarExistenciaProduto().equals("")){
+            if (TratarEstoque() > 0)
+                JOptionPane.showMessageDialog(rootPane,"Estoque atualizado");
+            else
+                JOptionPane.showMessageDialog(rootPane,"Erro ao tratar estoque");
+        }else{
+          JOptionPane.showMessageDialog(rootPane,msg+"");
+        }
+        }catch(Exception e){
+           JOptionPane.showMessageDialog(rootPane, e+"2.5__++");
+       }
+ 
+    }//GEN-LAST:event_jButtonVenderActionPerformed
 
     private void PreencherTextDescricao(Integer codProd){
         try{
@@ -315,23 +339,23 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
               List<Localidade> listalocalidade = localidadeDAO.lista();
                               
             for (int i = 0; i < listalocalidade.size(); i++) {
-              jComboBoxLocalidade.addItem(listalocalidade.get(i).getNome()+"--"+listalocalidade.get(i).getCodLocal());
+              jComboBoxLocalidade.addItem(listalocalidade.get(i).getNome()+
+                      "--"+listalocalidade.get(i).getCodLocal());
             }
         }catch(SQLException |ClassNotFoundException e){
-          JOptionPane.showMessageDialog(rootPane, e);
+          JOptionPane.showMessageDialog(rootPane, e+"4");
       }
     }
-    
-    private void PreencherComboProduto(Integer idLocalidade) {
+    private void PreencherComboProduto() {
       try{
         String descricaoProduto="";
         ProdutoDAO produtoDAO = new ProdutoDAO();
         
-        jComboBoxProduto.removeAllItems();
-        List<Produto> listaProdutos = produtoDAO.listaProdutosPorLocalidade(idLocalidade);
+       // jComboBoxProduto.removeAllItems();
+        List<Produto> listaProdutos = produtoDAO.lista();
           for (int i = 0; i < listaProdutos.size(); i++) {
-            jComboBoxProduto.addItem(listaProdutos.get(i).getCodProd().toString());
-            if (i ==0 )
+            jComboBoxProduto.addItem(listaProdutos.get(i).getCodProd().toString());         
+            if (i==0 )
                 descricaoProduto =listaProdutos.get(i).getDescricao();
           }
           
@@ -339,10 +363,9 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jTextDescricaoProduto.setText(descricaoProduto);
         
       } catch(SQLException |ClassNotFoundException e){
-          JOptionPane.showMessageDialog(rootPane, e);
+          JOptionPane.showMessageDialog(rootPane, e+"5");
       }
     }
-    
     private void PreencherComboCliente(){
       try {
         ClienteDAO clienteDAO = new ClienteDAO();
@@ -352,8 +375,47 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
           jComboBoxCliente.addItem(listaCliente.get(i).getNome()); 
         }
       } catch(SQLException | ClassNotFoundException e ) {
-        JOptionPane.showMessageDialog(rootPane, e);
+        JOptionPane.showMessageDialog(rootPane, e+"6");
       }
+    }
+    //***  EXISTÊNCIA DO PRODUTO ***
+    private String TratarExistenciaProduto(){ 
+      try{  
+        ProdutoDAO produtoDAO = new ProdutoDAO();
+        Integer codProdCombo ;
+    
+        if (jComboBoxProduto.getItemCount() > 0)
+          codProdCombo = Integer.parseInt(jComboBoxProduto.getSelectedItem().toString());
+        else
+          codProdCombo = null;
+      
+        Produto produto = produtoDAO.buscaProdutoPorCodProduto(codProdCombo);
+        
+        if (produto.getCodProd().toString().equals(""))
+            return "Produto não encontrado!";
+       
+        if (jTextQuantidade.getText().equals("")) 
+            return "Quantidade não informada!";  
+          
+        if (produto.getQtdEstoque() < Integer.parseInt(jTextQuantidade.getText()))
+            return "Produto sem estoque!";
+        
+      }catch(SQLException | ClassNotFoundException e ) {
+        return e.toString();
+      }   
+      return "";
+    }
+    //*** TRATAR ESTOQUE
+    private int TratarEstoque(){
+        try{ 
+            ProdutoDAO produtoDAO = new ProdutoDAO();
+                        
+            return produtoDAO.AtualizaEstoque(Integer.parseInt(jComboBoxProduto.getSelectedItem().toString()) ,Integer.parseInt(jTextQuantidade.getText()));
+        
+        }catch(SQLException | ClassNotFoundException e ) {
+          JOptionPane.showMessageDialog(rootPane, e+"\n");
+          return 0;
+        } 
     }
     /**
      * @param args the command line arguments
@@ -392,9 +454,9 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButtonVender;
     private javax.swing.JComboBox<String> jComboBoxCliente;
     private javax.swing.JComboBox<String> jComboBoxLocalidade;
     private javax.swing.JComboBox<String> jComboBoxProduto;
@@ -411,8 +473,8 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextDescricaoProduto;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextQuantidade;
     // End of variables declaration//GEN-END:variables
 
 }
