@@ -47,5 +47,42 @@ public class ClienteDAO {
 
     return listaClientes;
   }
+  
+  public Float buscaBonus(Integer codCli) throws SQLException{
+      Cliente cliente = new Cliente();
+      
+      try{
+        ResultSet rs = statement.executeQuery("select * from clientes where codcli ="
+                + codCli);
+        while (rs.next()) {
+        
+        cliente.setCodCli(rs.getInt("codcli"));
+        cliente.setNome(rs.getString("nome"));
+        cliente.setBonus(rs.getFloat("bonus"));
+        cliente.setPerfil(rs.getString("perfil"));
+        cliente.setStatus(rs.getString("status"));
+      
+        }
+      } catch (SQLException e){
+          e.printStackTrace();
+      }finally{
+          conexao.fecharConexao();
+      }
+      return cliente.getBonus();
+  }
+  
+  public void atualizaBonus(Float bonus, Integer codCli) throws SQLException{      
+    try {
+        String query = "update clientes set bonus = "+bonus+
+                " - 100 where codcli = "+codCli;
+        
+        statement.executeUpdate(query); 
+    } catch(SQLException e) {
+      throw e;
+    }finally{
+      conexao.fecharConexao();
+    }
+  
+  }
 
 }

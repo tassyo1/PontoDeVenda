@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package View;
 
 import DAO.ClienteDAO;
@@ -11,6 +6,7 @@ import DAO.ProdutoDAO;
 import Model.Cliente;
 import Model.Localidade;
 import Model.Produto;
+import Model.Venda;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,18 +20,12 @@ import javax.swing.JOptionPane;
  */
 public class JFramePontoDeVenda extends javax.swing.JFrame {
 
-    /**
-     * Creates new form JFramePontoDeVenda
-     */
-    
-    
     public JFramePontoDeVenda() {
         initComponents();
         
         PreencherComboLocalidade();
         PreencherComboProduto();
         PreencherComboCliente();
-
     }
 
     /**
@@ -307,20 +297,18 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxProdutoActionPerformed
 
     private void jButtonVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVenderActionPerformed
-       try{
+      /* try{
         String msg = TratarExistenciaProduto();
-        if (TratarExistenciaProduto().equals("")){
-            if (TratarEstoque() > 0)
-                JOptionPane.showMessageDialog(rootPane,"Estoque atualizado");
-            else
-                JOptionPane.showMessageDialog(rootPane,"Erro ao tratar estoque");
+        if (msg.equals("")){
+            
+           
         }else{
           JOptionPane.showMessageDialog(rootPane,msg+"");
         }
         }catch(Exception e){
            JOptionPane.showMessageDialog(rootPane, e+"2.5__++");
        }
- 
+      */
     }//GEN-LAST:event_jButtonVenderActionPerformed
 
     private void PreencherTextDescricao(Integer codProd){
@@ -405,18 +393,31 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
       }   
       return "";
     }
-    //*** TRATAR ESTOQUE
-    private int TratarEstoque(){
-        try{ 
-            ProdutoDAO produtoDAO = new ProdutoDAO();
-                        
-            return produtoDAO.AtualizaEstoque(Integer.parseInt(jComboBoxProduto.getSelectedItem().toString()) ,Integer.parseInt(jTextQuantidade.getText()));
         
+    ///*** GRAVAR VENDA
+    /*private int GravarVenda(){
+        try{ 
+            VendaDAO vendaDAO = new VendaDAO();
+            Venda venda = new Venda();
+            venda.setCodCli(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString()));
+            venda.setCodProd(Integer.parseInt(jComboBoxProduto.getSelectedItem().toString()));
+            venda.setCodLocal(Integer.parseInt(jComboBoxLocalidade.getSelectedItem().toString().split("--")[1]));
+            venda.setQtdVenda(Integer.parseInt(jTextQuantidade.getText());
+    
+            ProdutoDAO produtoDAO = new ProdutoDAO();
+            Produto produto = produtoDAO.buscaProdutoPorCodProduto(venda.getCodProd());
+    
+            venda.setValorTotal(venda.calculaTotal(produto.getPrecoUnitario())); 
+            venda.setValorTotal(venda.calculaDesconto1());
+            venda.setValorTotal(venda.calculaDesconto2());
+            
+            return vendaDAO.inserir(venda);
         }catch(SQLException | ClassNotFoundException e ) {
-          JOptionPane.showMessageDialog(rootPane, e+"\n");
+          JOptionPane.showMessageDialog(rootPane, e+"gravarVenda()");
           return 0;
         } 
-    }
+    }*/
+    
     /**
      * @param args the command line arguments
      */

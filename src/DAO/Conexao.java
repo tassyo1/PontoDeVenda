@@ -35,4 +35,28 @@ public class Conexao {
       throw e;
     }
   }
+  
+  public void commit() throws SQLException{
+      try {
+      conn.commit();
+    }catch (SQLException e){
+      throw e;
+    }
+  }
+  
+  public void rollback() throws SQLException{
+      try {
+      conn.rollback();
+    }catch (SQLException e){
+      throw e;
+    }
+  }
+  
+  public void autoCommit(Boolean option)throws SQLException{
+      try {
+      conn.setAutoCommit(option);
+      }catch (SQLException e){
+      throw e;
+    }
+  }
 }
