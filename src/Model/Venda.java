@@ -7,6 +7,7 @@ package Model;
 
 import DAO.ClienteDAO;
 import DAO.DescontoDAO;
+import DAO.ProdutoDAO;
 import java.sql.Date;
 import java.sql.SQLException;
 
@@ -19,7 +20,7 @@ public class Venda {
   private Integer codProd;
   private Integer codLocal;
   private Integer qtdVenda;
-  private Float valorTotal;
+  private Float valorTotal = 0f;
   private Date dataVenda;
 
   public Integer getCodCli(){
@@ -75,17 +76,51 @@ public class Venda {
   }
   
   public Float calculaDesconto1() throws SQLException, ClassNotFoundException{
+      try {
       ClienteDAO clienteDAO = new ClienteDAO();
       Float bonus = clienteDAO.buscaBonus(this.codCli);
       
       if (bonus >= 100){
         DescontoDAO descontoDAO = new DescontoDAO();
         Integer percentual = descontoDAO.buscaPercentual(this.codProd, this.qtdVenda);
-        if (percentual > 0){
+        if (percentual > 0)
             this.valorTotal = this.valorTotal - (this.valorTotal - percentual/100);
-            clienteDAO.atualizaBonus(bonus, this.codCli);
-        }
+        
+        atualizaBonus(bonus);
+        
       }
-      return this.valorTotal;
+    } catch(SQLException e) {
+      throw e;
+    }finally{
+     return this.valorTotal;
+    }
   }
+  
+  public Float calculaDesconto2() throws SQLException, ClassNotFoundException{
+      try {
+      ProdutoDAO produtoDAO = new ProdutoDAO();
+      Produto produto = produtoDAO.buscaProdutoPorCodProduto(this.codProd);
+      
+      if (produto.getcodLocal() == this.codLocal){
+          this.valorTotal = this.valorTotal -(this.valorTotal * 10/100);
+      }
+      } catch(SQLException e) {
+      throw e;
+    }finally{
+     return this.valorTotal;
+    }
+  }
+  
+  public void atualizaBonus(Float bonus)throws SQLException, ClassNotFoundException{
+    try{
+        ClienteDAO clienteDAO = new ClienteDAO();
+        clienteDAO.atualizaBonus(bonus, this.codCli);
+      
+    } catch(SQLException e) {
+      throw e;
+    }finally{
+        
+    }
+  }
+  
 }

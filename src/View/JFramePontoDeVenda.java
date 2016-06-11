@@ -3,6 +3,7 @@ package View;
 import DAO.ClienteDAO;
 import DAO.LocalidadeDAO;
 import DAO.ProdutoDAO;
+import DAO.VendaDAO;
 import Model.Cliente;
 import Model.Localidade;
 import Model.Produto;
@@ -297,18 +298,21 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxProdutoActionPerformed
 
     private void jButtonVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVenderActionPerformed
-      /* try{
+       try{
         String msg = TratarExistenciaProduto();
-        if (msg.equals("")){
-            
-           
+        if (msg.equals("")){            
+           msg = gravarVenda();
+           if(msg.equals(""))
+               JOptionPane.showMessageDialog(rootPane,"Venda inserida com sucesso");
+           else
+               JOptionPane.showMessageDialog(rootPane,msg);
         }else{
           JOptionPane.showMessageDialog(rootPane,msg+"");
         }
         }catch(Exception e){
            JOptionPane.showMessageDialog(rootPane, e+"2.5__++");
        }
-      */
+      
     }//GEN-LAST:event_jButtonVenderActionPerformed
 
     private void PreencherTextDescricao(Integer codProd){
@@ -360,7 +364,8 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         List<Cliente> listaCliente = clienteDAO.lista();
         
         for (int i = 0; i < listaCliente.size();i++){
-          jComboBoxCliente.addItem(listaCliente.get(i).getNome()); 
+          jComboBoxCliente.addItem(listaCliente.get(i).getNome()+
+                  "--"+listaCliente.get(i).getCodCli()); 
         }
       } catch(SQLException | ClassNotFoundException e ) {
         JOptionPane.showMessageDialog(rootPane, e+"6");
@@ -395,14 +400,14 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     }
         
     ///*** GRAVAR VENDA
-    /*private int GravarVenda(){
+    private String gravarVenda(){
         try{ 
             VendaDAO vendaDAO = new VendaDAO();
             Venda venda = new Venda();
-            venda.setCodCli(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString()));
+            venda.setCodCli(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
             venda.setCodProd(Integer.parseInt(jComboBoxProduto.getSelectedItem().toString()));
             venda.setCodLocal(Integer.parseInt(jComboBoxLocalidade.getSelectedItem().toString().split("--")[1]));
-            venda.setQtdVenda(Integer.parseInt(jTextQuantidade.getText());
+            venda.setQtdVenda(Integer.parseInt(jTextQuantidade.getText()));
     
             ProdutoDAO produtoDAO = new ProdutoDAO();
             Produto produto = produtoDAO.buscaProdutoPorCodProduto(venda.getCodProd());
@@ -411,12 +416,12 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
             venda.setValorTotal(venda.calculaDesconto1());
             venda.setValorTotal(venda.calculaDesconto2());
             
-            return vendaDAO.inserir(venda);
+            return vendaDAO.atualizaEstoqueInsereVenda(venda);
         }catch(SQLException | ClassNotFoundException e ) {
           JOptionPane.showMessageDialog(rootPane, e+"gravarVenda()");
-          return 0;
+          return "";
         } 
-    }*/
+    }
     
     /**
      * @param args the command line arguments

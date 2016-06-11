@@ -25,7 +25,6 @@ public class VendaDAO {
   
   public String atualizaEstoqueInsereVenda(Venda venda) throws SQLException{
        try {
-         String msg="";
          conexao.autoCommit(false);
 
          String query1 ="update produtos set qtd_estoque = qtd_estoque - "+ venda.getQtdVenda()+
@@ -37,15 +36,15 @@ public class VendaDAO {
                                             venda.getCodLocal()+" , "+
                                             venda.getQtdVenda()+" , "+
                                             venda.getValorTotal()+" , "+
-                                            " ver como colocar a data!!!)";
+                                            " now())";
 
          statement.executeUpdate(query1);
          statement.executeUpdate(query2);
          
          conexao.commit();
          
-         msg= "Transação OK";
-         return msg;
+         
+         return "";
         } catch (SQLException e) {
           conexao.rollback();
           return e.getMessage();
