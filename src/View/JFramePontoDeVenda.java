@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -55,7 +56,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jButtonVender = new javax.swing.JButton();
         jButton2Excluir = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        jTableItens = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
         jTextFieldTotalCompra = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
@@ -95,6 +96,12 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(28, 9, 116));
         jLabel3.setText("Local de Venda:");
         jLabel3.setToolTipText("");
+
+        jComboBoxCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxClienteActionPerformed(evt);
+            }
+        });
 
         jComboBoxLocalidade.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,7 +143,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jButton2Excluir.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButton2Excluir.setText("Excluir");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        jTableItens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -157,7 +164,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(jTableItens);
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(28, 9, 116));
@@ -317,6 +324,16 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
       
     }//GEN-LAST:event_jButtonVenderActionPerformed
 
+    private void jComboBoxClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClienteActionPerformed
+        try{
+            if (jComboBoxCliente.getItemCount() > 0)
+            PreencherTableItens(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
+            
+        }catch(Exception e){
+           JOptionPane.showMessageDialog(rootPane, "ComboCli--"+e );
+       }
+    }//GEN-LAST:event_jComboBoxClienteActionPerformed
+
     private void PreencherTextDescricao(Integer codProd){
         try{
            ProdutoDAO produtoDAO = new ProdutoDAO();
@@ -345,7 +362,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         String descricaoProduto="";
         ProdutoDAO produtoDAO = new ProdutoDAO();
         
-       // jComboBoxProduto.removeAllItems();
+       
         List<Produto> listaProdutos = produtoDAO.lista();
           for (int i = 0; i < listaProdutos.size(); i++) {
             jComboBoxProduto.addItem(listaProdutos.get(i).getCodProd().toString());         
@@ -373,7 +390,36 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(rootPane, e+"6");
       }
     }
-    //***  EXISTÊNCIA DO PRODUTO ***
+    private void PreencherTableItens(Integer codCli){
+        try{
+        VendaDAO vendaDAO = new VendaDAO();
+        List<Venda> vendas = vendaDAO.listaItensVendidos(codCli);
+        jTableItens.setAutoResizeMode(jTableItens.AUTO_RESIZE_OFF);
+        //largura das colunas
+        jTableItens.getColumnModel().getColumn(0).setPreferredWidth(305);
+        jTableItens.getColumnModel().getColumn(1).setPreferredWidth(100);
+        jTableItens.getColumnModel().getColumn(2).setPreferredWidth(100);
+        jTableItens.getColumnModel().getColumn(3).setPreferredWidth(100);
+        
+        //redimensionar false
+        jTableItens.getColumnModel().getColumn(0).setResizable(false);
+        jTableItens.getColumnModel().getColumn(1).setResizable(false);
+        jTableItens.getColumnModel().getColumn(2).setResizable(false);
+        jTableItens.getColumnModel().getColumn(3).setResizable(false);
+        
+        
+        
+        DefaultTableModel modelo = (DefaultTableModel) jTableItens.getModel();               
+        modelo.setNumRows(0);
+        for (Venda venda : vendas) {
+            modelo.addRow(new Object[]{venda.getDescricao(),venda.getQtdVenda(),venda.getPreco_unitario(),
+            venda.getValorTotal()});
+        } 
+        } catch(SQLException |ClassNotFoundException e){
+          JOptionPane.showMessageDialog(rootPane, e+"10");
+      }
+        
+    }
     private String TratarExistenciaProduto(){ 
       try{  
         ProdutoDAO produtoDAO = new ProdutoDAO();
@@ -400,8 +446,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
       }   
       return "";
     }
-        
-    ///*** GRAVAR VENDA
+
     private String gravarVenda(){
         try{ 
             VendaDAO vendaDAO = new VendaDAO();
@@ -479,7 +524,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JTable jTableItens;
     private javax.swing.JTextField jTextDescricaoProduto;
     private javax.swing.JTextField jTextFieldTotalCompra;
     private javax.swing.JTextField jTextQuantidade;

@@ -22,6 +22,8 @@ public class Venda {
   private Integer qtdVenda;
   private Float valorTotal = 0f;
   private Date dataVenda;
+  private String descricao;
+  private Float preco_unitario;
 
   public Integer getCodCli(){
     return this.codCli;
@@ -74,6 +76,23 @@ public class Venda {
       this.valorTotal = this.valorTotal +(this.qtdVenda * preco);
   }
   
+  
+  public String getDescricao() {
+      return descricao;
+  }
+  
+  public void setDescricao(String descricao) {
+      this.descricao = descricao;
+  }
+
+  public Float getPreco_unitario() {
+      return preco_unitario;
+  }
+
+  public void setPreco_unitario(Float preco_unitario) {
+      this.preco_unitario = preco_unitario;
+  }
+  
   public void calculaDesconto1() throws SQLException, ClassNotFoundException{
       try {
       ClienteDAO clienteDAO = new ClienteDAO();
@@ -121,5 +140,7 @@ public class Venda {
         
     }
   }
+
+
   
 }

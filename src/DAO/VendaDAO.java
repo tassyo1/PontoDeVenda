@@ -53,5 +53,27 @@ public class VendaDAO {
             conexao.fecharConexao();        
         }
   }
+  
+  public List<Venda> listaItensVendidos(Integer codCli) throws SQLException{
+       List<Venda> lista = new ArrayList<Venda>();
+      try{
+      ResultSet rs = statement.executeQuery("select descricao, qtd_venda, preco_unitario,"
+              + " valor_total  from vendas a, produtos b, clientes c "
+              + " where a.codprod = b.codprod and c.codcli = "+codCli);
+      while (rs.next()) {
+        Venda venda = new Venda();
+        venda.setDescricao(rs.getString("descricao"));
+        venda.setQtdVenda(rs.getInt("qtd_venda"));
+        venda.setPreco_unitario(rs.getFloat("preco_unitario"));
+        venda.setValorTotal(rs.getFloat("valor_total"));
+        lista.add(venda);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      conexao.fecharConexao();
+    }
+    return lista;
+  }
 
 }
