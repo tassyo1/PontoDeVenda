@@ -123,6 +123,8 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jLabel6.setText("Descrição do Produto:");
         jLabel6.setToolTipText("");
 
+        jTextDescricaoProduto.setEditable(false);
+
         jButtonVender.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonVender.setText("Vender");
         jButtonVender.addActionListener(new java.awt.event.ActionListener() {
@@ -292,7 +294,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
           if (jComboBoxProduto.getItemCount() > 0)
           PreencherTextDescricao(Integer.parseInt(jComboBoxProduto.getSelectedItem().toString()));
       }catch(Exception e){
-           JOptionPane.showMessageDialog(rootPane, e+"2__"+jComboBoxProduto.getItemCount());
+           JOptionPane.showMessageDialog(rootPane, e+"2-"+jComboBoxProduto.getItemCount());
        }
       
     }//GEN-LAST:event_jComboBoxProdutoActionPerformed
@@ -310,7 +312,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
           JOptionPane.showMessageDialog(rootPane,msg+"");
         }
         }catch(Exception e){
-           JOptionPane.showMessageDialog(rootPane, e+"2.5__++");
+           JOptionPane.showMessageDialog(rootPane, e+"2.5-");
        }
       
     }//GEN-LAST:event_jButtonVenderActionPerformed
@@ -387,8 +389,8 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         if (produto.getCodProd().toString().equals(""))
             return "Produto não encontrado!";
        
-        if (jTextQuantidade.getText().equals("")) 
-            return "Quantidade não informada!";  
+        if (jTextQuantidade.getText().equals("") || jTextQuantidade.getText().equals("0")) 
+            return "Quantidade não informada ou igual a zero!";  
           
         if (produto.getQtdEstoque() < Integer.parseInt(jTextQuantidade.getText()))
             return "Produto sem estoque!";
@@ -412,9 +414,9 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
             ProdutoDAO produtoDAO = new ProdutoDAO();
             Produto produto = produtoDAO.buscaProdutoPorCodProduto(venda.getCodProd());
     
-            venda.setValorTotal(venda.calculaTotal(produto.getPrecoUnitario())); 
-            venda.setValorTotal(venda.calculaDesconto1());
-            venda.setValorTotal(venda.calculaDesconto2());
+            venda.calculaTotal(produto.getPrecoUnitario()); 
+            venda.calculaDesconto1();
+            venda.calculaDesconto2();
             
             return vendaDAO.atualizaEstoqueInsereVenda(venda);
         }catch(SQLException | ClassNotFoundException e ) {

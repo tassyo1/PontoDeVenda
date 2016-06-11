@@ -70,12 +70,11 @@ public class Venda {
     this.dataVenda = dataVenda ;
   }
   
-  public Float calculaTotal( Float preco){
+  public void calculaTotal( Float preco){
       this.valorTotal = this.valorTotal +(this.qtdVenda * preco);
-      return this.valorTotal;
   }
   
-  public Float calculaDesconto1() throws SQLException, ClassNotFoundException{
+  public void calculaDesconto1() throws SQLException, ClassNotFoundException{
       try {
       ClienteDAO clienteDAO = new ClienteDAO();
       Float bonus = clienteDAO.buscaBonus(this.codCli);
@@ -84,7 +83,7 @@ public class Venda {
         DescontoDAO descontoDAO = new DescontoDAO();
         Integer percentual = descontoDAO.buscaPercentual(this.codProd, this.qtdVenda);
         if (percentual > 0)
-            this.valorTotal = this.valorTotal - (this.valorTotal - percentual/100);
+            this.valorTotal = this.valorTotal - (this.valorTotal * percentual/100);
         
         atualizaBonus(bonus);
         
@@ -92,11 +91,11 @@ public class Venda {
     } catch(SQLException e) {
       throw e;
     }finally{
-     return this.valorTotal;
+
     }
   }
   
-  public Float calculaDesconto2() throws SQLException, ClassNotFoundException{
+  public void calculaDesconto2() throws SQLException, ClassNotFoundException{
       try {
       ProdutoDAO produtoDAO = new ProdutoDAO();
       Produto produto = produtoDAO.buscaProdutoPorCodProduto(this.codProd);
@@ -107,7 +106,7 @@ public class Venda {
       } catch(SQLException e) {
       throw e;
     }finally{
-     return this.valorTotal;
+    
     }
   }
   

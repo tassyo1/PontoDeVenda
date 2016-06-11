@@ -27,9 +27,8 @@ public class DescontoDAO {
       try{
         ResultSet rs = statement.executeQuery("select percentual from descontos "
                 + "where codprod = "+codProd + 
-                " and qtd_min >= " +qtd+ " and qtd_max <= "+qtd);
+                " and qtd_min <= " +qtd+ " and qtd_max >= "+qtd);
         while (rs.next()) {
-        
          percentual = rs.getInt("percentual");
               
         }
