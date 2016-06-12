@@ -103,11 +103,11 @@ public class Venda {
       if (bonus >= 100){
         DescontoDAO descontoDAO = new DescontoDAO();
         Integer percentual = descontoDAO.buscaPercentual(this.codProd, this.qtdVenda);
-        if (percentual > 0)
+        if (percentual > 0){
             this.valorTotal = this.valorTotal - (this.valorTotal * percentual/100);
         
         atualizaBonus(bonus);
-        
+        }
       }
     } catch(SQLException e) {
       throw e;

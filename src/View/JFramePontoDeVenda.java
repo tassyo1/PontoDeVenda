@@ -10,13 +10,9 @@ import Model.Produto;
 import Model.Venda;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 /**
  *
@@ -320,9 +316,10 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         String msg = TratarExistenciaProduto();
         if (msg.equals("")){            
            msg = gravarVenda();
-           if(msg.equals(""))
+           if(msg.equals("")){
                JOptionPane.showMessageDialog(rootPane,"Venda inserida com sucesso");
-           else
+               PreencherTableItens(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
+           }else
                JOptionPane.showMessageDialog(rootPane,msg);
         }else{
           JOptionPane.showMessageDialog(rootPane,msg+"");
@@ -479,6 +476,8 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
           
         if (produto.getQtdEstoque() < Integer.parseInt(jTextQuantidade.getText()))
             return "Produto sem estoque!";
+        
+        
         
       }catch(SQLException | ClassNotFoundException e ) {
         return e.toString();
