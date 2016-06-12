@@ -173,11 +173,6 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTableItens.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableItensMouseClicked(evt);
-            }
-        });
         jScrollPane2.setViewportView(jTableItens);
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -349,32 +344,36 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxClienteActionPerformed
 
     private void jButton2ExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ExcluirActionPerformed
+       try{
         String msg ="";
         int linhaClicada = jTableItens.getSelectedRow();
         if (linhaClicada == -1){
             JOptionPane.showMessageDialog(rootPane,"Selecione a venda que deseja excluir");
         }else{
-          //  msg = excluirVenda();
+            msg = excluirVenda();
+            if(msg.equals("")){
+                JOptionPane.showMessageDialog(rootPane,"Venda deletada com sucesso");
+                PreencherTableItens(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
+            }else
+                JOptionPane.showMessageDialog(rootPane,msg); 
+        }
+        }catch(Exception e){
+           JOptionPane.showMessageDialog(rootPane, e+"clique-excluir");
         }
         
     }//GEN-LAST:event_jButton2ExcluirActionPerformed
-
-    private void jTableItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableItensMouseClicked
-        int linhaselecionada = jTableItens.getSelectedRow();
-        //Exibir os valores das colunas da tabela nas caixas de texto
-        //jTableItens.getValueAt(linhaselecionada, 0).toString(); jTableItens.getModel().getValueAt(linhaselecionada, 4).toString()
-        
-      // JOptionPane.showMessageDialog(rootPane, jTableItens.getModel().getValueAt(linhaselecionada, 4).toString() );
-    }//GEN-LAST:event_jTableItensMouseClicked
     
-    //coluna no model do jtable
+    //adiciona coluna no model do jtable
     private void addColuna(){
         DefaultTableModel model = (DefaultTableModel) jTableItens.getModel();
         model.addColumn("data");
+        model.addColumn("codprod");
     }
-    // remove coluna adiciona. Alternativa para uma "hidden column"
+    // remove coluna adicionada. Alternativa para uma "hidden column"
     private void removeColuna(){
-        jTableItens.removeColumn(jTableItens.getColumnModel().getColumn(4));
+       // jTableItens.removeColumn(jTableItens.getColumnModel().getColumn(4));
+        jTableItens.removeColumn(jTableItens.getColumnModel().getColumn(jTableItens.getColumnCount() -1));
+        jTableItens.removeColumn(jTableItens.getColumnModel().getColumn(jTableItens.getColumnCount() -1));
     }
     private void PreencherTextDescricao(Integer codProd){
         try{
@@ -453,7 +452,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         modelo.setNumRows(0);
         for (Venda venda : vendas) {
             modelo.addRow(new Object[]{venda.getDescricao(),venda.getQtdVenda(),venda.getPreco_unitario(),
-            venda.getValorTotal(),venda.getDataVenda()});
+            venda.getValorTotal(),venda.getDataVenda(), venda.getCodProd()});
         } 
         } catch(SQLException |ClassNotFoundException e){
           JOptionPane.showMessageDialog(rootPane, e+"10");
@@ -509,20 +508,33 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
           return "";
         } 
     }
-    
-    private String excluirVenda() throws SQLException, ClassNotFoundException{
+    private Venda buscaVenda() throws SQLException, ClassNotFoundException{
         VendaDAO vendaDAO = new VendaDAO();
-        Integer codCli = Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]);
-        Integer codProd = Integer.parseInt(jComboBoxProduto.getSelectedItem().toString());
+        Integer codCli = Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]);        
         Timestamp data =  (Timestamp) jTableItens.getModel().getValueAt(jTableItens.getSelectedRow(), 4);
+        Integer codProd = (Integer) jTableItens.getModel().getValueAt(jTableItens.getSelectedRow(), 5);
         
         Venda venda = vendaDAO.buscaVendaDelecao(codCli,codProd,data);
-        Boolean devolve = devolverBonus(venda);
+        return venda;
         
-        return vendaDAO.deletaVendaAtualizaEstoque(venda,devolve);   
+    }
+    private String excluirVenda() {
+        String msg ="";
+        try{
+            VendaDAO vendaDAO = new VendaDAO();
+            Boolean devolve = devolverBonus();
+        
+            Venda venda = buscaVenda();
+        
+            msg = vendaDAO.deletaVendaAtualizaEstoque(venda,devolve);  
+         }catch(SQLException | ClassNotFoundException e ) {
+          msg = e.getMessage();
+        } 
+        return msg;
     }
     
-    private Boolean devolverBonus(Venda venda) throws SQLException, ClassNotFoundException{
+    private Boolean devolverBonus() throws SQLException, ClassNotFoundException{
+        Venda venda = buscaVenda();
         ProdutoDAO produtoDAO = new ProdutoDAO();
         Produto produto = produtoDAO.buscaProdutoPorCodProduto(venda.getCodProd());
         

@@ -2,7 +2,7 @@
 package DAO;
 import Model.Venda;
 import com.mysql.jdbc.Statement;
-import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -16,6 +16,7 @@ public class VendaDAO {
   private Conexao conexao;
   private Statement statement;
 
+  
   public VendaDAO() throws SQLException, ClassNotFoundException{
     conexao = new Conexao();
     try{
@@ -60,7 +61,7 @@ public class VendaDAO {
        List<Venda> lista = new ArrayList<Venda>();
       try{
       ResultSet rs = statement.executeQuery("select descricao, qtd_venda, preco_unitario,"
-              + " valor_total, data_venda  from vendas a, produtos b, clientes c "
+              + " valor_total, data_venda, a.codprod  from vendas a, produtos b, clientes c "
               + " where a.codprod = b.codprod and c.codcli = "+codCli);
       while (rs.next()) {
         Venda venda = new Venda();
@@ -69,6 +70,7 @@ public class VendaDAO {
         venda.setPreco_unitario(rs.getFloat("preco_unitario"));
         venda.setValorTotal(rs.getFloat("valor_total"));
         venda.setDataVenda(rs.getTimestamp("data_venda"));
+        venda.setCodProd(rs.getInt("codprod"));
         lista.add(venda);
       }
     } catch (SQLException e) {
@@ -86,8 +88,8 @@ public class VendaDAO {
          String query1 ="update produtos set qtd_estoque = qtd_estoque + "+ venda.getQtdVenda()+
                                    " where codprod = "+venda.getCodProd().toString()+ ""; 
 
-         String query2 = "delete vendas where codcli ="+venda.getCodCli()+
-                 " and data_venda = "+venda.getDataVenda();
+         String query2 = "delete from vendas where codcli = "+venda.getCodCli()+
+                 " and data_venda = '"+venda.getDataVenda().toString()+"'";
          
          String query3 = "update clientes set bonus = bonus + 100 where codcli = "+
                  venda.getCodCli();
@@ -113,10 +115,11 @@ public class VendaDAO {
   
   public Venda buscaVendaDelecao(Integer codCli, Integer codProd, Timestamp data) throws SQLException{
       Venda venda = new Venda();
-      try{
-      ResultSet rs = statement.executeQuery("select * from "
-              + " vendas where codcli = "+codCli + " and codprod = "+
-              codProd+ " and data_agendada ="+data);
+      try{  
+          String query = "select * from vendas where codcli = "+codCli + 
+                  " and codprod = "+codProd+" and data_venda = '"+data.toString()+"'";
+          
+         ResultSet rs = statement.executeQuery(query);
       while (rs.next()){
           venda.setCodCli(rs.getInt("codcli"));
           venda.setCodLocal(rs.getInt("codlocal"));
