@@ -9,6 +9,7 @@ import Model.Localidade;
 import Model.Produto;
 import Model.Venda;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ComboBoxModel;
@@ -348,7 +349,13 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxClienteActionPerformed
 
     private void jButton2ExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ExcluirActionPerformed
-        
+        String msg ="";
+        int linhaClicada = jTableItens.getSelectedRow();
+        if (linhaClicada == -1){
+            JOptionPane.showMessageDialog(rootPane,"Selecione a venda que deseja excluir");
+        }else{
+          //  msg = excluirVenda();
+        }
         
     }//GEN-LAST:event_jButton2ExcluirActionPerformed
 
@@ -357,14 +364,13 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         //Exibir os valores das colunas da tabela nas caixas de texto
         //jTableItens.getValueAt(linhaselecionada, 0).toString(); jTableItens.getModel().getValueAt(linhaselecionada, 4).toString()
         
-       // JOptionPane.showMessageDialog(rootPane, jTableItens.getModel().getValueAt(linhaselecionada, 4).toString() );
+      // JOptionPane.showMessageDialog(rootPane, jTableItens.getModel().getValueAt(linhaselecionada, 4).toString() );
     }//GEN-LAST:event_jTableItensMouseClicked
     
     //coluna no model do jtable
     private void addColuna(){
         DefaultTableModel model = (DefaultTableModel) jTableItens.getModel();
         model.addColumn("data");
-        
     }
     // remove coluna adiciona. Alternativa para uma "hidden column"
     private void removeColuna(){
@@ -504,9 +510,34 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         } 
     }
     
-    /**
-     * @param args the command line arguments
-     */
+    private String excluirVenda() throws SQLException, ClassNotFoundException{
+        VendaDAO vendaDAO = new VendaDAO();
+        Integer codCli = Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]);
+        Integer codProd = Integer.parseInt(jComboBoxProduto.getSelectedItem().toString());
+        Timestamp data =  (Timestamp) jTableItens.getModel().getValueAt(jTableItens.getSelectedRow(), 4);
+        
+        Venda venda = vendaDAO.buscaVendaDelecao(codCli,codProd,data);
+        Boolean devolve = devolverBonus(venda);
+        
+        return vendaDAO.deletaVendaAtualizaEstoque(venda,devolve);   
+    }
+    
+    private Boolean devolverBonus(Venda venda) throws SQLException, ClassNotFoundException{
+        ProdutoDAO produtoDAO = new ProdutoDAO();
+        Produto produto = produtoDAO.buscaProdutoPorCodProduto(venda.getCodProd());
+        
+        Float valorSemDes= produto.getPrecoUnitario() * venda.getQtdVenda();
+        if (venda.getCodLocal() == produto.getcodLocal()){
+            Float descontoLocal = valorSemDes * 0.1f; //10%
+            venda.setValorTotal(venda.getValorTotal() + descontoLocal);       
+        }
+         if (venda.getValorTotal() < valorSemDes){
+            return true;
+        }
+        return false;
+    }
+   
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

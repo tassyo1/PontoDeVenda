@@ -71,7 +71,7 @@ public class VendaDAO {
         venda.setDataVenda(rs.getTimestamp("data_venda"));
         lista.add(venda);
       }
-    } catch (Exception e) {
+    } catch (SQLException e) {
       e.printStackTrace();
     } finally {
       conexao.fecharConexao();
@@ -79,7 +79,7 @@ public class VendaDAO {
     return lista;
   }
   
-  public String deletaVendaAtualizaEstoque(Venda venda) throws SQLException{
+  public String deletaVendaAtualizaEstoque(Venda venda, Boolean devolve) throws SQLException{
        try {
          conexao.autoCommit(false);
 
@@ -88,9 +88,15 @@ public class VendaDAO {
 
          String query2 = "delete vendas where codcli ="+venda.getCodCli()+
                  " and data_venda = "+venda.getDataVenda();
+         
+         String query3 = "update clientes set bonus = bonus + 100 where codcli = "+
+                 venda.getCodCli();
 
          statement.executeUpdate(query1);
          statement.executeUpdate(query2);
+         if(devolve)
+             statement.executeUpdate(query3);
+        
          
          conexao.commit();
          
@@ -104,5 +110,28 @@ public class VendaDAO {
             conexao.fecharConexao();        
         }
   }
-
+  
+  public Venda buscaVendaDelecao(Integer codCli, Integer codProd, Timestamp data) throws SQLException{
+      Venda venda = new Venda();
+      try{
+      ResultSet rs = statement.executeQuery("select * from "
+              + " vendas where codcli = "+codCli + " and codprod = "+
+              codProd+ " and data_agendada ="+data);
+      while (rs.next()){
+          venda.setCodCli(rs.getInt("codcli"));
+          venda.setCodLocal(rs.getInt("codlocal"));
+          venda.setCodProd(rs.getInt("codprod"));
+          venda.setQtdVenda(rs.getInt("qtd_venda"));
+          venda.setValorTotal(rs.getFloat("valor_total"));
+          venda.setDataVenda(rs.getTimestamp("data_venda"));    
+      }
+      
+      } catch (SQLException e){
+          e.printStackTrace();  
+      } finally{
+        conexao.fecharConexao();
+      }
+      return venda; 
+    }
+  
 }
