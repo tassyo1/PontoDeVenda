@@ -10,6 +10,8 @@ import DAO.DescontoDAO;
 import DAO.ProdutoDAO;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -21,7 +23,7 @@ public class Venda {
   private Integer codLocal;
   private Integer qtdVenda;
   private Float valorTotal = 0f;
-  private Date dataVenda;
+  private Timestamp dataVenda;
   private String descricao;
   private Float preco_unitario;
 
@@ -64,11 +66,11 @@ public class Venda {
     this.valorTotal = valorTotal ;
   }
 
-  public Date getDataVenda(){
+  public Timestamp getDataVenda(){
     return this.dataVenda;
   }
 
-  public void setDataVenda(Date dataVenda){
+  public void setDataVenda(Timestamp dataVenda){
     this.dataVenda = dataVenda ;
   }
   

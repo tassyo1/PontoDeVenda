@@ -15,6 +15,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -25,9 +26,11 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
     public JFramePontoDeVenda() {
         initComponents();
         
+        addColuna();
         PreencherComboLocalidade();
         PreencherComboProduto();
         PreencherComboCliente();
+        removeColuna();
     }
 
     /**
@@ -142,6 +145,11 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
 
         jButton2Excluir.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButton2Excluir.setText("Excluir");
+        jButton2Excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ExcluirActionPerformed(evt);
+            }
+        });
 
         jTableItens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -162,6 +170,11 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        jTableItens.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableItensMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(jTableItens);
@@ -334,6 +347,29 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
        }
     }//GEN-LAST:event_jComboBoxClienteActionPerformed
 
+    private void jButton2ExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ExcluirActionPerformed
+        
+        
+    }//GEN-LAST:event_jButton2ExcluirActionPerformed
+
+    private void jTableItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableItensMouseClicked
+        int linhaselecionada = jTableItens.getSelectedRow();
+        //Exibir os valores das colunas da tabela nas caixas de texto
+        //jTableItens.getValueAt(linhaselecionada, 0).toString(); jTableItens.getModel().getValueAt(linhaselecionada, 4).toString()
+        
+       // JOptionPane.showMessageDialog(rootPane, jTableItens.getModel().getValueAt(linhaselecionada, 4).toString() );
+    }//GEN-LAST:event_jTableItensMouseClicked
+    
+    //coluna no model do jtable
+    private void addColuna(){
+        DefaultTableModel model = (DefaultTableModel) jTableItens.getModel();
+        model.addColumn("data");
+        
+    }
+    // remove coluna adiciona. Alternativa para uma "hidden column"
+    private void removeColuna(){
+        jTableItens.removeColumn(jTableItens.getColumnModel().getColumn(4));
+    }
     private void PreencherTextDescricao(Integer codProd){
         try{
            ProdutoDAO produtoDAO = new ProdutoDAO();
@@ -406,14 +442,12 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jTableItens.getColumnModel().getColumn(1).setResizable(false);
         jTableItens.getColumnModel().getColumn(2).setResizable(false);
         jTableItens.getColumnModel().getColumn(3).setResizable(false);
-        
-        
-        
+           
         DefaultTableModel modelo = (DefaultTableModel) jTableItens.getModel();               
         modelo.setNumRows(0);
         for (Venda venda : vendas) {
             modelo.addRow(new Object[]{venda.getDescricao(),venda.getQtdVenda(),venda.getPreco_unitario(),
-            venda.getValorTotal()});
+            venda.getValorTotal(),venda.getDataVenda()});
         } 
         } catch(SQLException |ClassNotFoundException e){
           JOptionPane.showMessageDialog(rootPane, e+"10");
@@ -463,7 +497,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
             venda.calculaDesconto1();
             venda.calculaDesconto2();
             
-            return vendaDAO.atualizaEstoqueInsereVenda(venda);
+            return vendaDAO.insereVendaAtualizaEstoque(venda);
         }catch(SQLException | ClassNotFoundException e ) {
           JOptionPane.showMessageDialog(rootPane, e+"gravarVenda()");
           return "";
