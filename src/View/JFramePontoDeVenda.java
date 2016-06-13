@@ -327,6 +327,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
            if(msg.equals("")){
                JOptionPane.showMessageDialog(rootPane,"Venda inserida com sucesso");
                PreencherTableItens(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
+               PreencherTextTotal(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
            }else
                JOptionPane.showMessageDialog(rootPane,msg);
         }else{
@@ -360,6 +361,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
             if(msg.equals("")){
                 JOptionPane.showMessageDialog(rootPane,"Venda deletada com sucesso");
                 PreencherTableItens(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
+                PreencherTextTotal(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
             }else
                 JOptionPane.showMessageDialog(rootPane,msg); 
         }
