@@ -176,8 +176,16 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jLabel7.setText("Total da Compra:");
         jLabel7.setToolTipText("");
 
+        jTextFieldTotalCompra.setEditable(false);
+        jTextFieldTotalCompra.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
         jButton3.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButton3.setText("Fechar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -334,9 +342,10 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         try{
             if (jComboBoxCliente.getItemCount() > 0)
             PreencherTableItens(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
+            PreencherTextTotal(Integer.parseInt(jComboBoxCliente.getSelectedItem().toString().split("--")[1]));
             
         }catch(Exception e){
-           JOptionPane.showMessageDialog(rootPane, "ComboCli--"+e );
+           JOptionPane.showMessageDialog(rootPane, "ComboCliente --"+e );
        }
     }//GEN-LAST:event_jComboBoxClienteActionPerformed
 
@@ -359,6 +368,10 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_jButton2ExcluirActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        this.dispose();  
+    }//GEN-LAST:event_jButton3ActionPerformed
     
     //adiciona coluna no model do jtable
     private void addColuna(){
@@ -444,9 +457,11 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         jTableItens.getColumnModel().getColumn(1).setResizable(false);
         jTableItens.getColumnModel().getColumn(2).setResizable(false);
         jTableItens.getColumnModel().getColumn(3).setResizable(false);
-           
-        DefaultTableModel modelo = (DefaultTableModel) jTableItens.getModel();               
-        modelo.setNumRows(0);
+        
+        
+        DefaultTableModel modelo = (DefaultTableModel) jTableItens.getModel();   
+        modelo.setRowCount(0);
+        
         for (Venda venda : vendas) {
             modelo.addRow(new Object[]{venda.getDescricao(),venda.getQtdVenda(),venda.getPreco_unitario(),
             venda.getValorTotal(),venda.getDataVenda(), venda.getCodProd()});
@@ -456,11 +471,23 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
       }
         
     }
+    private void PreencherTextTotal(Integer codCli) throws SQLException, ClassNotFoundException{
+        try{
+            VendaDAO vendaDAO = new VendaDAO();
+            Float total = vendaDAO.buscaSomaTotal(codCli);
+            jTextFieldTotalCompra.setText(total.toString());
+        }catch(SQLException | ClassNotFoundException e){
+            JOptionPane.showMessageDialog(rootPane, e+"text-Total");
+        }
+    }
     private String TratarExistenciaProduto(){ 
       try{  
         ProdutoDAO produtoDAO = new ProdutoDAO();
         Integer codProdCombo ;
-    
+        
+        if (!isInteger(jTextQuantidade.getText()))
+            return "Valor de Quantidade invalido!";
+        
         if (jComboBoxProduto.getItemCount() > 0)
           codProdCombo = Integer.parseInt(jComboBoxProduto.getSelectedItem().toString());
         else
@@ -476,8 +503,6 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
           
         if (produto.getQtdEstoque() < Integer.parseInt(jTextQuantidade.getText()))
             return "Produto sem estoque!";
-        
-        
         
       }catch(SQLException | ClassNotFoundException e ) {
         return e.toString();
@@ -548,6 +573,15 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         return false;
     }
    
+    private Boolean isInteger(String texto){
+        try{
+            Integer.parseInt(texto);
+            return true;
+        } catch (NumberFormatException e)
+        {
+            return false;
+        }
+    }
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

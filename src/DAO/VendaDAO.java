@@ -137,4 +137,20 @@ public class VendaDAO {
       return venda; 
     }
   
+  public Float buscaSomaTotal(Integer codCli) throws SQLException{
+      Float soma =0f;
+      try{
+      String query = "select round(sum(valor_total),2) as tot from vendas"+
+              " where codcli = "+codCli;
+      ResultSet rs = statement.executeQuery(query);
+      while (rs.next()){
+          soma = rs.getFloat("tot");
+      }
+      } catch (SQLException e){
+          e.printStackTrace();  
+      } finally{
+        conexao.fecharConexao();
+      }
+      return soma;
+  }
 }
