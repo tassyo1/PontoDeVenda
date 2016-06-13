@@ -460,6 +460,7 @@ public class JFramePontoDeVenda extends javax.swing.JFrame {
         
         
         DefaultTableModel modelo = (DefaultTableModel) jTableItens.getModel();   
+        
         modelo.setRowCount(0);
         
         for (Venda venda : vendas) {

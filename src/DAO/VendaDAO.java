@@ -62,7 +62,7 @@ public class VendaDAO {
       try{
       ResultSet rs = statement.executeQuery("select descricao, qtd_venda, preco_unitario,"
               + " valor_total, data_venda, a.codprod  from vendas a, produtos b, clientes c "
-              + " where a.codprod = b.codprod and c.codcli = "+codCli);
+              + " where a.codprod = b.codprod and a.codcli = c.codcli and a.codcli = "+codCli);
       while (rs.next()) {
         Venda venda = new Venda();
         venda.setDescricao(rs.getString("descricao"));
